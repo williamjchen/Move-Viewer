@@ -1,4 +1,4 @@
 # Bitboard Viewer
-Bitboard viewer for chess developers - supports decimal, hexadecimal and binary numbers with four available layouts. https://tearth.dev/bitboard-viewer/
+Bitboard viewer for moves - supports decimal, hexadecimal and binary numbers with four available layouts. https://williamjchen.github.io/Move-Viewer/
 
-![Preview](https://i.imgur.com/N6nY21W.png)
+![Preview](./img/demo.jpg)
