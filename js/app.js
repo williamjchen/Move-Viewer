@@ -20,24 +20,39 @@ $(document).ready(function() {
     $('#decBitboard1').keyup(() => decKeyUp($('#bitboard1'), $('#decBitboard1'), $('#hexBitboard1'), $('#binBitboard1')));
     $('#hexBitboard1').keyup(() => hexKeyUp($('#bitboard1'), $('#decBitboard1'), $('#hexBitboard1'), $('#binBitboard1')));
     $('#binBitboard1').keyup(() => binKeyUp($('#bitboard1'), $('#decBitboard1'), $('#hexBitboard1'), $('#binBitboard1')));
+
+    generateMoveTypeListeners();
     
-    $('#fillBitboard1').click(() => fillBitboard($('#decBitboard1')));
+    // $('#fillBitboard1').click(() => fillBitboard($('#decBitboard1')));
     
-    $('#clearBitboard1').click(() => clearBitboard($('#decBitboard1')));
+    // $('#clearBitboard1').click(() => clearBitboard($('#decBitboard1')));
     
-    $('#shlBitboard1').click(() => shlBitboard($('#decBitboard1')));
+    // $('#shlBitboard1').click(() => shlBitboard($('#decBitboard1')));
     
-    $('#shrBitboard1').click(() => shrBitboard($('#decBitboard1')));
+    // $('#shrBitboard1').click(() => shrBitboard($('#decBitboard1')));
     
-    $('#notBitboard1').click(() => notBitboard($('#decBitboard1')));
+    // $('#notBitboard1').click(() => notBitboard($('#decBitboard1')));
     
-    $('#andBitboard3').click(() => doOperation((x, y) => x & y));
-    $('#orBitboard3').click(() => doOperation((x, y) => x | y));
-    $('#xorBitboard3').click(() => doOperation((x, y) => x ^ y));
+    // $('#andBitboard3').click(() => doOperation((x, y) => x & y));
+    // $('#orBitboard3').click(() => doOperation((x, y) => x | y));
+    // $('#xorBitboard3').click(() => doOperation((x, y) => x ^ y));
 
     updateBitboard($('#bitboard1'),BigInt($('#decBitboard1').val()));
     updateBitboard($('#bitboard3'),BigInt($('#decBitboard3').val()));
 });
+
+function generateMoveTypeListeners() {
+    for (var i = BigInt(0); i < 16; i++) {
+        $(`#moveType${i}`).click(((i) => {
+            return function() {
+                var bigIntValue = BigInt($('#decBitboard1').val());
+                bigIntValue = bigIntValue | BigInt(i << 12n);
+                $('#decBitboard1').val(bigIntValue);
+                decKeyUp($('#bitboard1'), $('#decBitboard1'), $('#hexBitboard1'), $('#binBitboard1'));
+            }
+        })(i));
+    }
+}
 
 function generateLayout(layout, variant) {
     for (var y = 0; y < 8; y++) {
@@ -112,26 +127,26 @@ function generateBitboard(bitboard, decTextbox, readOnly, fillButtons) {
 			}
 
 
-            checkbox.click(((v) => {
+            checkbox.click(((v, s) => {
                 return function() {
-                    status++;
-                    if (status == 3) status = 0;
-
-                    if (status == 0) {
+                    s++;
+                    if (s == 3) s = 0;
+                    console.log(s)
+                    if (s == 0) {
                         $(this).prop('checked', false);
                     } else {
                         $(this).prop('checked', true);
                     }
                     
-                    if (status == 1) {
+                    if (s == 1) {
                         $(this).css("accent-color", "green");
-                    } else if (status == 2) {
+                    } else if (s == 2) {
                         $(this).css("accent-color", "red");
                     }
 
                     bitboardCheckboxClick(bitboard, decTextbox, v)
                 }
-            })(value));
+            })(value, status));
 			
 			if (!readOnly && fillButtons) {
 				row.prepend(rowbutton);
@@ -179,8 +194,8 @@ function changeLayout(variant) {
 }
 
 function refreshValuesAfterLayoutChange() {
-    decKeyUp($('#bitboard1'), $('#decBitboard1'), $('#hexBitboard1'), $('#binBitboard1'));
-    decKeyUp($('#bitboard3'), $('#decBitboard3'), $('#hexBitboard3'), $('#binBitboard3'));
+    //decKeyUp($('#bitboard1'), $('#decBitboard1'), $('#hexBitboard1'), $('#binBitboard1'));
+    //decKeyUp($('#bitboard3'), $('#decBitboard3'), $('#hexBitboard3'), $('#binBitboard3'));
 }
 
 function doOperation(operation) {
