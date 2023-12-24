@@ -38,7 +38,7 @@ $(document).ready(function() {
     // $('#xorBitboard3').click(() => doOperation((x, y) => x ^ y));
 
     updateBitboard($('#bitboard1'),BigInt($('#decBitboard1').val()));
-    updateBitboard($('#bitboard3'),BigInt($('#decBitboard1').val()));
+    updateBitboard3($('#decBitboard1').val());
 });
 
 function generateMoveTypeListeners() {
