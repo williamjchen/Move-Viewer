@@ -144,7 +144,7 @@ function generateBitboard(bitboard, decTextbox, readOnly, fillButtons) {
                         $(this).css("accent-color", "red");
                     }
 
-                    bitboardCheckboxClick(bitboard, decTextbox, v)
+                    bitboardCheckboxClick(bitboard, decTextbox, v, s)
                 }
             })(value, status));
 			
@@ -194,7 +194,7 @@ function changeLayout(variant) {
 }
 
 function refreshValuesAfterLayoutChange() {
-    //decKeyUp($('#bitboard1'), $('#decBitboard1'), $('#hexBitboard1'), $('#binBitboard1'));
+    decKeyUp($('#bitboard1'), $('#decBitboard1'), $('#hexBitboard1'), $('#binBitboard1'));
     //decKeyUp($('#bitboard3'), $('#decBitboard3'), $('#hexBitboard3'), $('#binBitboard3'));
 }
 
@@ -266,12 +266,23 @@ function updateBitboard(bitboard, value) {
     }
 }
 
-function bitboardCheckboxClick(bitboard, decTextbox, index) {
+function bitboardCheckboxClick(bitboard, decTextbox, index, status) {
     var checkbox = bitboard.find('input[type=checkbox][value=' + index + ']');
     var state = checkbox.prop('checked');
     var variantIndex = BigInt(getselectedLayoutByIndex(selectedLayout, index));
+
     var value = BigInt(decTextbox.val());
-    value = (value & ~(1n << variantIndex)) | (BigInt(state ? 1 : 0) << variantIndex);
+    //value = (value & ~(1n << variantIndex)) | (BigInt(state ? 1 : 0) << variantIndex);
+    if (status == 1) { // from 
+        value = value & BigInt(61503)
+        value = value | BigInt(index << 6)
+    } else if (status == 2) { // to
+        value = value & BigInt(65472)
+        value = value | BigInt(index)
+    }
+    console.log(value)
+    
+    
     decTextbox.val(value);
     
     refreshValuesAfterLayoutChange();
