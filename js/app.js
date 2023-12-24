@@ -112,6 +112,7 @@ function generateBitboard(bitboard, decTextbox, readOnly, fillButtons) {
 		// Checkboxes
 		for (var x = 0; x < 8; x++) {
 			var value = x + y * 8;
+            var status = 0 // 0-off, 1-green, 2-red
 			var checkbox = $(document.createElement('input')).prop({
 				type: 'checkbox',
 				value: value,
@@ -121,7 +122,27 @@ function generateBitboard(bitboard, decTextbox, readOnly, fillButtons) {
 				checkbox.prop('readonly', true);
 			}
 
-			checkbox.click(((v) => () => bitboardCheckboxClick(bitboard, decTextbox, v))(value));
+
+            checkbox.click(((v) => {
+                return function() {
+                    status++;
+                    if (status == 3) status = 0;
+
+                    if (status == 0) {
+                        $(this).prop('checked', false);
+                    } else {
+                        $(this).prop('checked', true);
+                    }
+                    
+                    if (status == 1) {
+                        $(this).css("accent-color", "green");
+                    } else if (status == 2) {
+                        $(this).css("accent-color", "red");
+                    }
+
+                    bitboardCheckboxClick(bitboard, decTextbox, v)
+                }
+            })(value));
 			
 			if (!readOnly && fillButtons) {
 				row.prepend(rowbutton);
