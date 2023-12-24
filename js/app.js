@@ -6,9 +6,9 @@ $(document).ready(function() {
     generateLayout($('#layout3'), 3);
     generateLayout($('#layout4'), 4);
     
-    generateBitboard($('#bitboard1'), $('#decBitboard1'), false);
-    generateBitboard($('#bitboard2'), $('#decBitboard2'), false);
-    generateBitboard($('#bitboard3'), $('#decBitboard3'), true);
+    generateBitboard($('#bitboard1'), $('#decBitboard1'), false, false);
+    generateBitboard($('#bitboard2'), $('#decBitboard2'), false, false);
+    generateBitboard($('#bitboard3'), $('#decBitboard3'), true, false);
     
     loadCookies();   
     $('#container').show();
@@ -70,7 +70,7 @@ function generateLayout(layout, variant) {
     }
 }
 
-function generateBitboard(bitboard, decTextbox, readOnly) {
+function generateBitboard(bitboard, decTextbox, readOnly, fillButtons) {
 	// Add bottom div for column buttons
 	if (!readOnly) {
 		var bottomrow = $(document.createElement('div')).prop({
@@ -84,7 +84,7 @@ function generateBitboard(bitboard, decTextbox, readOnly) {
 		});
 		
 		// Add buttons to fill a row
-		if (!readOnly){
+		if (!readOnly && fillButtons){
 			var rowbutton = $(document.createElement('button')).prop({
 				type: 'rowbutton',
 				value: y,
@@ -97,7 +97,7 @@ function generateBitboard(bitboard, decTextbox, readOnly) {
 		
 		// Buttons to fill columns
 		const files =  ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-		if (!readOnly) {
+		if (!readOnly && fillButtons) {
 			var colbutton = $(document.createElement('button')).prop({
 				type: 'colbutton',
 				value: files[y],
@@ -123,11 +123,11 @@ function generateBitboard(bitboard, decTextbox, readOnly) {
 
 			checkbox.click(((v) => () => bitboardCheckboxClick(bitboard, decTextbox, v))(value));
 			
-			if (!readOnly) {
+			if (!readOnly && fillButtons) {
 				row.prepend(rowbutton);
 			}
 				
-			if (!readOnly) {
+			if (!readOnly && fillButtons) {
 				bottomrow.append(colbutton);
 			}
 			

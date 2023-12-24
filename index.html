@@ -14,8 +14,8 @@
             <nav class="my-2 my-md-0 mr-md-3">
                 <a class="p-2 text-dark" href="https://www.chessprogramming.org/Bitboards">What is bitboard?</a>
                 <a class="p-2 text-dark" href="https://www.chessprogramming.org/Main_Page">Chess Programming Wiki</a>
-                <a class="p-2 text-dark" href="https://github.com/Tearth/Bitboard-Viewer">Source code</a>
-				<a class="p-2 text-dark" href="https://github.com/Tearth/Bitboard-Viewer/issues">Report a bug</a>
+                <a class="p-2 text-dark" href="https://github.com/williamjchen/Move-Viewer">Source code</a>
+				<a class="p-2 text-dark" href="https://github.com/williamjchen/Move-Viewer/issues">Report a bug</a>
             </nav>
         </div>
         <div id="container" class="container" style="display: none">
@@ -65,40 +65,60 @@
                         <div class="input-row"><input type="textbox" id="hexBitboard1" class="form-control" placeholder="Hexadecimal" value="0x0"></div>
                         <div class="input-row"><input type="textbox" id="binBitboard1" class="form-control" placeholder="Binary" value="0b0"></div>
                         <div class="btn-group buttons-row">
-                            <input type="button" id="fillBitboard1" class="btn btn-primary" value="Fill">
-                            <input type="button" id="clearBitboard1" class="btn btn-primary" value="Clear">
-                            <input type="button" id="shlBitboard1" class="btn btn-primary" value="Shl">
-                            <input type="button" id="shrBitboard1" class="btn btn-primary" value="Shr">
-                            <input type="button" id="notBitboard1" class="btn btn-primary" value="Not">
+                            <input type="button" id="moveType0" class="btn btn-primary" value="0">
+                            <input type="button" id="moveType1" class="btn btn-primary" value="1">
+                            <input type="button" id="moveType2" class="btn btn-primary" value="2">
+                            <input type="button" id="moveType3" class="btn btn-primary" value="3">
+                            <input type="button" id="moveType4" class="btn btn-primary" value="4">
+                            <input type="button" id="moveType5" class="btn btn-primary" value="5">
+                            <input type="button" id="moveType6" class="btn btn-primary" value="6">
+                            <input type="button" id="moveType7" class="btn btn-primary" value="7">
+                        </div>
+                        <div class="btn-group buttons-row">
+                            <input type="button" id="moveType8" class="btn btn-primary" value="8">
+                            <input type="button" id="moveType9" class="btn btn-primary" value="9">
+                            <input type="button" id="moveType10" class="btn btn-primary" value="10">
+                            <input type="button" id="moveType11" class="btn btn-primary" value="11">
+                            <input type="button" id="moveType12" class="btn btn-primary" value="12">
+                            <input type="button" id="moveType13" class="btn btn-primary" value="13">
+                            <input type="button" id="moveType14" class="btn btn-primary" value="14">
+                            <input type="button" id="moveType15" class="btn btn-primary" value="15">
+                        </div>
+                        <div>
+                            <p>Click checkbox multiple time to cycle between colours</p>
+                            <ul>
+                                <li>Green - from</li>
+                                <li>Red - to</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
                 <div class="card mb-4 box-shadow small-bottom-margin">
                     <div class="card-body small-padding">
-                        <div id="bitboard2" class="bitboard"></div>
-                        <div class="input-row"><input type="textbox" id="decBitboard2" class="form-control" placeholder="Decimal" value="0"></div>
-                        <div class="input-row"><input type="textbox" id="hexBitboard2" class="form-control" placeholder="Hexadecimal" value="0x0"></div>
-                        <div class="input-row"><input type="textbox" id="binBitboard2" class="form-control" placeholder="Binary" value="0b0"></div>
-                        <div class="btn-group buttons-row">
-                            <input type="button" id="fillBitboard2" class="btn btn-primary" value="Fill">
-                            <input type="button" id="clearBitboard2" class="btn btn-primary" value="Clear">
-                            <input type="button" id="shlBitboard2" class="btn btn-primary" value="Shl">
-                            <input type="button" id="shrBitboard2" class="btn btn-primary" value="Shr">
-                            <input type="button" id="notBitboard2" class="btn btn-primary" value="Not">
-                        </div>
+                        <div class="input-row"><input type="textbox" id="0" class="form-control" placeholder="0" value="Quiet moves"></div>
+                        <div class="input-row"><input type="textbox" id="1" class="form-control" placeholder="1" value="Double Pawn push"></div>
+                        <div class="input-row"><input type="textbox" id="2" class="form-control" placeholder="2" value="King Castle"></div>
+                        <div class="input-row"><input type="textbox" id="3" class="form-control" placeholder="3" value="Queen Castle"></div>
+                        <div class="input-row"><input type="textbox" id="4" class="form-control" placeholder="4" value="Capture"></div>
+                        <div class="input-row"><input type="textbox" id="5" class="form-control" placeholder="5" value="En Passant Capture"></div>
+                        <div class="input-row"><input type="textbox" id="6" class="form-control" placeholder="6" value=""></div>
+                        <div class="input-row"><input type="textbox" id="7" class="form-control" placeholder="7" value=""></div>
+                        <div class="input-row"><input type="textbox" id="8" class="form-control" placeholder="8" value="Knight Promotion"></div>
+                        <div class="input-row"><input type="textbox" id="9" class="form-control" placeholder="9" value="Bishop Promotion"></div>
+                        <div class="input-row"><input type="textbox" id="10" class="form-control" placeholder="10" value="Rook Promotion"></div>
+                        <div class="input-row"><input type="textbox" id="11" class="form-control" placeholder="11" value="Queen Promotion"></div>
+                        <div class="input-row"><input type="textbox" id="12" class="form-control" placeholder="12" value="Knight Promotion Capture"></div>
+                        <div class="input-row"><input type="textbox" id="13" class="form-control" placeholder="13" value="Bishop Promotion Capture"></div>
+                        <div class="input-row"><input type="textbox" id="14" class="form-control" placeholder="14" value="Rook Promotion Capture"></div>
+                        <div class="input-row"><input type="textbox" id="15" class="form-control" placeholder="15" value="Queen Promotion Capture"></div>
                     </div>
                 </div>
                 <div class="card mb-4 box-shadow small-bottom-margin">
                     <div class="card-body small-padding">
                         <div id="bitboard3" class="bitboard"></div>
-                        <div class="input-row"><input type="textbox" id="decBitboard3" class="form-control" placeholder="Decimal" value="0" readonly></div>
-                        <div class="input-row"><input type="textbox" id="hexBitboard3" class="form-control" placeholder="Hexadecimal" value="0x0" readonly></div>
-                        <div class="input-row"><input type="textbox" id="binBitboard3" class="form-control" placeholder="Binary" value="0b0" readonly></div>
-                        <div class="btn-group buttons-row">
-                            <input type="button" id="andBitboard3" class="btn btn-success" value="AND">
-                            <input type="button" id="orBitboard3" class="btn btn-success" value="OR">
-                            <input type="button" id="xorBitboard3" class="btn btn-success" value="XOR">
-                        </div>
+                        <div class="input-row"><input type="textbox" id="moveType3" class="form-control" placeholder="type" value="" readonly></div>
+                        <div class="input-row"><input type="textbox" id="from3" class="form-control" placeholder="from" value="" readonly></div>
+                        <div class="input-row"><input type="textbox" id="to3" class="form-control" placeholder="to" value="" readonly></div>
                     </div>
                 </div>
             </div>
