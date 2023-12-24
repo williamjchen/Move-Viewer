@@ -38,7 +38,7 @@ $(document).ready(function() {
     // $('#xorBitboard3').click(() => doOperation((x, y) => x ^ y));
 
     updateBitboard($('#bitboard1'),BigInt($('#decBitboard1').val()));
-    updateBitboard($('#bitboard3'),BigInt($('#decBitboard3').val()));
+    updateBitboard($('#bitboard3'),BigInt($('#decBitboard1').val()));
 });
 
 function generateMoveTypeListeners() {
@@ -46,6 +46,7 @@ function generateMoveTypeListeners() {
         $(`#moveType${i}`).click(((i) => {
             return function() {
                 var bigIntValue = BigInt($('#decBitboard1').val());
+                bigIntValue = bigIntValue & ~(15n << 12n)
                 bigIntValue = bigIntValue | BigInt(i << 12n);
                 $('#decBitboard1').val(bigIntValue);
                 decKeyUp($('#bitboard1'), $('#decBitboard1'), $('#hexBitboard1'), $('#binBitboard1'));
@@ -116,10 +117,10 @@ function generateBitboard(bitboard, decTextbox, readOnly, fillButtons) {
 		// Checkboxes
 		for (var x = 0; x < 8; x++) {
 			var value = x + y * 8;
-            var status = 0 // 0-off, 1-green, 2-red
 			var checkbox = $(document.createElement('input')).prop({
 				type: 'checkbox',
 				value: value,
+                status: 0,
 			});
 			
 			if (readOnly) {
@@ -127,26 +128,23 @@ function generateBitboard(bitboard, decTextbox, readOnly, fillButtons) {
 			}
 
 
-            checkbox.click(((v, s) => {
+            checkbox.click(((v) => {
                 return function() {
-                    s++;
-                    if (s == 3) s = 0;
-                    console.log(s)
-                    if (s == 0) {
-                        $(this).prop('checked', false);
-                    } else {
-                        $(this).prop('checked', true);
-                    }
+                    $(this).prop('status', $(this).prop('status') + 1)
                     
-                    if (s == 1) {
-                        $(this).css("accent-color", "green");
-                    } else if (s == 2) {
-                        $(this).css("accent-color", "red");
+                    if ($(this).prop('status') == 3) s = $(this).prop('status', 0);
+
+                    if ($(this).prop('status') == 0) {
+                        $(this).prop('checked', false).css("accent-color", "white");
+                    } else if ($(this).prop('status') == 1) {
+                        $(this).prop('checked', true).css("accent-color", "green");
+                    } else { // s == 2
+                        $(this).prop('checked', true).css("accent-color", "red");
                     }
 
-                    bitboardCheckboxClick(bitboard, decTextbox, v, s)
+                    bitboardCheckboxClick(bitboard, decTextbox, v)
                 }
-            })(value, status));
+            })(value));
 			
 			if (!readOnly && fillButtons) {
 				row.prepend(rowbutton);
@@ -194,6 +192,7 @@ function changeLayout(variant) {
 }
 
 function refreshValuesAfterLayoutChange() {
+    console.log("test")
     decKeyUp($('#bitboard1'), $('#decBitboard1'), $('#hexBitboard1'), $('#binBitboard1'));
     //decKeyUp($('#bitboard3'), $('#decBitboard3'), $('#hexBitboard3'), $('#binBitboard3'));
 }
@@ -207,12 +206,18 @@ function doOperation(operation) {
     updateBitboard($('#bitboard3'), result);
 }
 
+function updateBitboard3(value) {
+    updateReadOnlyTextboxes(value);
+    updateBitboard($('#bitboard3'), value);
+}
+
 function decKeyUp(bitboard, decTextbox, hexTextbox, binTextbox) {
     var bigIntValue = BigInt(decTextbox.val());
     hexTextbox.val('0x' + bigIntValue.toString(16));
     binTextbox.val('0b' + bigIntValue.toString(2));
     
     updateBitboard(bitboard, bigIntValue);
+    updateBitboard3(decTextbox.val());
 }
 
 function hexKeyUp(bitboard, decTextbox, hexTextbox, binTextbox) {
@@ -232,9 +237,15 @@ function binKeyUp(bitboard, decTextbox, hexTextbox, binTextbox) {
 }
 
 function updateReadOnlyTextboxes(value) {
-    $('#decBitboard3').val(value.toString(10));
-    $('#hexBitboard3').val('0x' + value.toString(16));
-    $('#binBitboard3').val('0b' + value.toString(2));
+    var to = value & 63;
+    value = value >> 6;
+    var from = value & 63;
+    value = value >> 6;
+    var flag = value;
+
+    $('#typ3').val($(`#${flag}`).val() + `(${flag})`);
+    $('#from3').val(from.toString());
+    $('#to3').val(to.toString());
 }
 
 function updateBitboard(bitboard, value) {
@@ -245,6 +256,8 @@ function updateBitboard(bitboard, value) {
     //     var bitboardIndex = getselectedLayoutByIndex(selectedLayout, index);
     //     bitboard.find('input[type=checkbox][value=' + bitboardIndex + ']').prop('checked', bit != 0);
     // }
+    value = BigInt(value)
+
     var to = value & 63n;
     value = value >> 6n;
     var from = value & 63n;
@@ -257,31 +270,46 @@ function updateBitboard(bitboard, value) {
         
         var bitboardIndex = getselectedLayoutByIndex(selectedLayout, index);
         if (index == to) {
-            bitboard.find('input[type=checkbox][value=' + bitboardIndex + ']').prop('checked', true).css("accent-color", "red");
+            bitboard.find('input[type=checkbox][value=' + bitboardIndex + ']').prop('checked', true).prop("status", 2).css("accent-color", "red");
         } else if (index == from) {
-            bitboard.find('input[type=checkbox][value=' + bitboardIndex + ']').prop('checked', true).css("accent-color", "green");
+            bitboard.find('input[type=checkbox][value=' + bitboardIndex + ']').prop('checked', true).prop("status", 1).css("accent-color", "green");
         } else {
-            bitboard.find('input[type=checkbox][value=' + bitboardIndex + ']').prop('checked', false);
+            bitboard.find('input[type=checkbox][value=' + bitboardIndex + ']').prop('checked', false).prop("status", 0).css("accent-color", "white");
         }
     }
 }
 
-function bitboardCheckboxClick(bitboard, decTextbox, index, status) {
+function isBoardValid() {
+    var bitboard = $('#bitboard1');
+    var from = 0;
+    var to = 0;
+
+    for (var index = 0; index < 64; index++) {
+        var bitboardIndex = getselectedLayoutByIndex(selectedLayout, index);
+        if (bitboard.find('input[type=checkbox][value=' + bitboardIndex + ']').prop("status") == 2) to++;
+        if (bitboard.find('input[type=checkbox][value=' + bitboardIndex + ']').prop("status") == 1) from++;
+    }
+    return from == 1 && to == 1;
+}
+
+function bitboardCheckboxClick(bitboard, decTextbox, index) {
+    if (!isBoardValid()) return;
+
     var checkbox = bitboard.find('input[type=checkbox][value=' + index + ']');
     var state = checkbox.prop('checked');
     var variantIndex = BigInt(getselectedLayoutByIndex(selectedLayout, index));
 
-    var value = BigInt(decTextbox.val());
+    var value = BigInt(0);
     //value = (value & ~(1n << variantIndex)) | (BigInt(state ? 1 : 0) << variantIndex);
-    if (status == 1) { // from 
-        value = value & BigInt(61503)
-        value = value | BigInt(index << 6)
-    } else if (status == 2) { // to
-        value = value & BigInt(65472)
-        value = value | BigInt(index)
-    }
-    console.log(value)
-    
+
+    for (var i = 0; i < 64; i++) {
+        var bitboardIndex = getselectedLayoutByIndex(selectedLayout, i);
+        if (bitboard.find('input[type=checkbox][value=' + bitboardIndex + ']').prop("status") == 2) { // red
+            value = value | BigInt(i)
+        } else if (bitboard.find('input[type=checkbox][value=' + bitboardIndex + ']').prop("status") == 1) { // green
+            value = value | BigInt(i << 6)
+        }
+    }  
     
     decTextbox.val(value);
     
