@@ -7,7 +7,6 @@ $(document).ready(function() {
     generateLayout($('#layout4'), 4);
     
     generateBitboard($('#bitboard1'), $('#decBitboard1'), false, false);
-    generateBitboard($('#bitboard2'), $('#decBitboard2'), false, false);
     generateBitboard($('#bitboard3'), $('#decBitboard3'), true, false);
     
     loadCookies();   
@@ -22,31 +21,21 @@ $(document).ready(function() {
     $('#hexBitboard1').keyup(() => hexKeyUp($('#bitboard1'), $('#decBitboard1'), $('#hexBitboard1'), $('#binBitboard1')));
     $('#binBitboard1').keyup(() => binKeyUp($('#bitboard1'), $('#decBitboard1'), $('#hexBitboard1'), $('#binBitboard1')));
     
-    $('#decBitboard2').keyup(() => decKeyUp($('#bitboard2'), $('#decBitboard2'), $('#hexBitboard2'), $('#binBitboard2')));
-    $('#hexBitboard2').keyup(() => hexKeyUp($('#bitboard2'), $('#decBitboard2'), $('#hexBitboard2'), $('#binBitboard2')));
-    $('#binBitboard2').keyup(() => binKeyUp($('#bitboard2'), $('#decBitboard2'), $('#hexBitboard2'), $('#binBitboard2')));
-    
     $('#fillBitboard1').click(() => fillBitboard($('#decBitboard1')));
-    $('#fillBitboard2').click(() => fillBitboard($('#decBitboard2')));
     
     $('#clearBitboard1').click(() => clearBitboard($('#decBitboard1')));
-    $('#clearBitboard2').click(() => clearBitboard($('#decBitboard2')));
     
     $('#shlBitboard1').click(() => shlBitboard($('#decBitboard1')));
-    $('#shlBitboard2').click(() => shlBitboard($('#decBitboard2')));
     
     $('#shrBitboard1').click(() => shrBitboard($('#decBitboard1')));
-    $('#shrBitboard2').click(() => shrBitboard($('#decBitboard2')));
     
     $('#notBitboard1').click(() => notBitboard($('#decBitboard1')));
-    $('#notBitboard2').click(() => notBitboard($('#decBitboard2')));
     
     $('#andBitboard3').click(() => doOperation((x, y) => x & y));
     $('#orBitboard3').click(() => doOperation((x, y) => x | y));
     $('#xorBitboard3').click(() => doOperation((x, y) => x ^ y));
 
     updateBitboard($('#bitboard1'),BigInt($('#decBitboard1').val()));
-    updateBitboard($('#bitboard2'),BigInt($('#decBitboard2').val()));
     updateBitboard($('#bitboard3'),BigInt($('#decBitboard3').val()));
 });
 
@@ -191,7 +180,6 @@ function changeLayout(variant) {
 
 function refreshValuesAfterLayoutChange() {
     decKeyUp($('#bitboard1'), $('#decBitboard1'), $('#hexBitboard1'), $('#binBitboard1'));
-    decKeyUp($('#bitboard2'), $('#decBitboard2'), $('#hexBitboard2'), $('#binBitboard2'));
     decKeyUp($('#bitboard3'), $('#decBitboard3'), $('#hexBitboard3'), $('#binBitboard3'));
 }
 
@@ -235,12 +223,31 @@ function updateReadOnlyTextboxes(value) {
 }
 
 function updateBitboard(bitboard, value) {
+    // for (var index = 0; index < 64; index++) {
+    //     var bit = value & 1n;
+    //     value = value >> 1n;
+        
+    //     var bitboardIndex = getselectedLayoutByIndex(selectedLayout, index);
+    //     bitboard.find('input[type=checkbox][value=' + bitboardIndex + ']').prop('checked', bit != 0);
+    // }
+    var to = value & 63n;
+    value = value >> 6n;
+    var from = value & 63n;
+    value = value >> 6n;
+    var flag = value;
+
     for (var index = 0; index < 64; index++) {
         var bit = value & 1n;
         value = value >> 1n;
         
         var bitboardIndex = getselectedLayoutByIndex(selectedLayout, index);
-        bitboard.find('input[type=checkbox][value=' + bitboardIndex + ']').prop('checked', bit != 0);
+        if (index == to) {
+            bitboard.find('input[type=checkbox][value=' + bitboardIndex + ']').prop('checked', true).css("accent-color", "red");
+        } else if (index == from) {
+            bitboard.find('input[type=checkbox][value=' + bitboardIndex + ']').prop('checked', true).css("accent-color", "green");
+        } else {
+            bitboard.find('input[type=checkbox][value=' + bitboardIndex + ']').prop('checked', false);
+        }
     }
 }
 
